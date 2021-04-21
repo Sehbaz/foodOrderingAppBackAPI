@@ -94,4 +94,28 @@ public class CustomerBusinessService {
         CustomerEntity customerEntity = customerDao.getCustomerByUuid(uuid);
         return customerEntity;
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CustomerAuthEntity customerLogout(String accessToken)throws AuthenticationFailedException{
+        CustomerAuthEntity customerAuthEntity = customerAuthDao.getCustomerAuthByAccessToken(accessToken);
+
+        if(customerAuthEntity == null){
+            throw new AuthenticationFailedException("ATHR-001","Customer is not Logged in.");
+        }
+
+        if(customerAuthEntity.getLogoutAt() != null){
+            throw new AuthenticationFailedException("ATHR-002","Customer is logged out. Log in again to access this endpoint.");
+        }
+
+        final ZonedDateTime now = ZonedDateTime.now();
+
+        if(customerAuthEntity.getExpiresAt().compareTo(now) < 0){
+            throw new AuthenticationFailedException("ATHR-003","Your session is expired. Log in again to access this endpoint.");
+        }
+
+        customerAuthEntity.setLogoutAt(ZonedDateTime.now());
+
+        CustomerAuthEntity upatedCustomerAuthEntity = customerAuthDao.customerLogout(customerAuthEntity);
+        return upatedCustomerAuthEntity;
+    }
 }

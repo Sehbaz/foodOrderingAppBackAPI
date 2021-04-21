@@ -4,6 +4,7 @@ import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 @Repository
@@ -14,6 +15,20 @@ public class CustomerAuthDao {
 
 
     public CustomerAuthEntity createCustomerAuth (CustomerAuthEntity customerAuthEntity){
+        entityManager.persist(customerAuthEntity);
+        return customerAuthEntity;
+    }
+
+    public CustomerAuthEntity getCustomerAuthByAccessToken(String accessToken){
+        try{
+            CustomerAuthEntity customerAuthEntity = entityManager.createNamedQuery("getCustomerAuthByAccessToken",CustomerAuthEntity.class).setParameter("access_Token",accessToken).getSingleResult();
+            return customerAuthEntity;
+        }catch (NoResultException nre){
+            return null;
+        }
+
+    }
+    public CustomerAuthEntity customerLogout (CustomerAuthEntity customerAuthEntity){
         entityManager.persist(customerAuthEntity);
         return customerAuthEntity;
     }
