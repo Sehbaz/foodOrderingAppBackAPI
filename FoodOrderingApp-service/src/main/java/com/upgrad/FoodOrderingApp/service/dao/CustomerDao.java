@@ -31,4 +31,12 @@ public class CustomerDao {
         entityManager.persist(customerEntity);
         return customerEntity;
     }
+    public CustomerEntity getCustomerByUuid (final String uuid){
+        try {
+            CustomerEntity customer = entityManager.createNamedQuery("customerByUuid",CustomerEntity.class).setParameter("uuid",uuid).getSingleResult();
+            return customer;
+        }catch (NoResultException nre){
+            return null;
+        }
+    }
 }
