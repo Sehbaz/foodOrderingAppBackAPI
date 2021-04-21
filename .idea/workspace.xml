@@ -367,13 +367,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <list>
-      <item itemvalue="Application.FoodOrderingAppApiApplication" />
-      <item itemvalue="JUnit.CategoryControllerTest" />
-      <item itemvalue="JUnit.OrderControllerTest" />
-      <item itemvalue="JUnit.RestaurantControllerTest" />
-      <item itemvalue="Spring Boot.FoodOrderingAppApiApplication" />
-    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Spring Boot.FoodOrderingAppApiApplication" />
