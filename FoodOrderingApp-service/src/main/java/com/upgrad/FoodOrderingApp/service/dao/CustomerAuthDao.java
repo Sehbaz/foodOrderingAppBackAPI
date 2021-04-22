@@ -29,7 +29,7 @@ public class CustomerAuthDao {
 
     }
     public CustomerAuthEntity customerLogout (CustomerAuthEntity customerAuthEntity){
-        entityManager.persist(customerAuthEntity);
+        entityManager.merge(customerAuthEntity);
         return customerAuthEntity;
     }
 

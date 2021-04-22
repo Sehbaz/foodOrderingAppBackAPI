@@ -1,14 +1,12 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
-import com.upgrad.FoodOrderingApp.api.model.LoginResponse;
-import com.upgrad.FoodOrderingApp.api.model.LogoutResponse;
-import com.upgrad.FoodOrderingApp.api.model.SignupCustomerRequest;
-import com.upgrad.FoodOrderingApp.api.model.SignupCustomerResponse;
+import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerBusinessService;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
+import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -71,6 +69,7 @@ public class CustomerController {
         return new ResponseEntity<LoginResponse>(loginResponse,headers,HttpStatus.OK);
     }
 
+    //Logged out controller
     @RequestMapping(method = RequestMethod.POST,path = "/logout",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<LogoutResponse> customerLogout (@RequestHeader("authorization")final String authorization)throws AuthenticationFailedException{
         CustomerAuthEntity customerAuthEntity =  customerBusinessService.customerLogout(authorization);
@@ -82,4 +81,38 @@ public class CustomerController {
         return new ResponseEntity<LogoutResponse>(logoutResponse,HttpStatus.OK);
     }
 
+
+    @RequestMapping(method = RequestMethod.PUT,path = "",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<UpdateCustomerResponse> updateCustomerDetails(@RequestHeader("authorization")final String authorization, UpdateCustomerRequest updateCustomerRequest)throws AuthenticationFailedException, UpdateCustomerException {
+        String[] authorizationArray = authorization.split("Bearer ");
+        CustomerEntity customerEntity = new CustomerEntity();
+        customerEntity.setFirstName(updateCustomerRequest.getFirstName());
+        customerEntity.setLastName(updateCustomerRequest.getLastName());
+
+        CustomerEntity updatedCustomerEntity = customerBusinessService.updateCustomerDetails(customerEntity,authorizationArray[1]);
+
+        UpdateCustomerResponse updateCustomerResponse = new UpdateCustomerResponse()
+                .firstName(updatedCustomerEntity.getFirstName())
+                .lastName(updatedCustomerEntity.getLastName())
+                .id(updatedCustomerEntity.getUuid())
+                .status("CUSTOMER DETAILS UPDATED SUCCESSFULLY");
+
+        return new ResponseEntity<UpdateCustomerResponse>(updateCustomerResponse,HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT,path = "/password",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<UpdatePasswordResponse> updateCustomerPassword(@RequestHeader ("authorization") final String authorization, UpdatePasswordRequest updatePasswordRequest)throws AuthenticationFailedException,UpdateCustomerException{
+        String oldPassword = updatePasswordRequest.getOldPassword();
+        String newPassword = updatePasswordRequest.getNewPassword();
+
+        CustomerEntity updatedCustomerEntity = customerBusinessService.updateCustomerPassword(authorization,oldPassword,newPassword);
+
+        UpdatePasswordResponse updatePasswordResponse = new UpdatePasswordResponse()
+                .id(updatedCustomerEntity.getUuid())
+                .status("CUSTOMER PASSWORD UPDATED SUCCESSFULLY");
+
+        return new ResponseEntity<UpdatePasswordResponse>(updatePasswordResponse,HttpStatus.OK);
+    }
 }
+
+

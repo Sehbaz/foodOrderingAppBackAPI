@@ -39,4 +39,8 @@ public class CustomerDao {
             return null;
         }
     }
+    public CustomerEntity updateCustomer(CustomerEntity customerToBeUpdated){
+        entityManager.merge(customerToBeUpdated);
+        return customerToBeUpdated;
+    }
 }
