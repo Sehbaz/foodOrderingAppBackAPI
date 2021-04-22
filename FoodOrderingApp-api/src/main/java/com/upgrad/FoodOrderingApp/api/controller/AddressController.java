@@ -5,6 +5,7 @@ import com.upgrad.FoodOrderingApp.service.businness.AddressBusinessService;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerBusinessService;
 import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
+import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
@@ -22,7 +23,7 @@ import java.util.UUID;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/address")
+@RequestMapping("/")
 public class AddressController {
 
     @Autowired
@@ -34,7 +35,7 @@ public class AddressController {
 
 
 
-    @RequestMapping(method = RequestMethod.POST,path = "",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(method = RequestMethod.POST,path = "/address",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SaveAddressResponse> saveAddress(@RequestHeader("authorization") final String authorization, SaveAddressRequest saveAddressRequest)throws AuthorizationFailedException, AddressNotFoundException, SaveAddressException {
         AddressEntity addressEntity = new AddressEntity();
 
@@ -54,7 +55,7 @@ public class AddressController {
         return new ResponseEntity<SaveAddressResponse>(saveAddressResponse,HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET,path = "/customer",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(method = RequestMethod.GET,path = "/address/customer",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AddressListResponse> getAllSavedAddress(@RequestHeader("authorization")final String authorization)throws AuthorizationFailedException {
         List<AddressEntity> addressEntities = addressBusinessService.getAllSavedAddress(authorization);
         Collections.reverse(addressEntities);
@@ -74,10 +75,10 @@ public class AddressController {
         });
 
         AddressListResponse addressListResponse = new AddressListResponse().addresses(addressLists);
-        System.out.println(addressListResponse);
+
         return new ResponseEntity<AddressListResponse>(addressListResponse,HttpStatus.OK);
     }
-    @RequestMapping(method = RequestMethod.DELETE,path = "/{address_id}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(method = RequestMethod.DELETE,path = "/address/{address_id}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<DeleteAddressResponse> deleteSavedAddress(@RequestHeader ("authorization") final String authorization,@PathVariable(value = "address_id")final String addressUuid)throws AuthorizationFailedException,AddressNotFoundException{
         String accessToken = authorization.split("Bearer ")[1];
 
@@ -94,6 +95,24 @@ public class AddressController {
         return new ResponseEntity<DeleteAddressResponse>(deleteAddressResponse,HttpStatus.OK);
 
 
+    }
+    @RequestMapping(method = RequestMethod.GET,path = "/states",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<StatesListResponse> getAllStates(){
+        List<StateEntity> stateEntities = addressBusinessService.getAllStates();
+        if(!stateEntities.isEmpty()) {
+            List<StatesList> statesLists = new LinkedList<>();
+            stateEntities.forEach(stateEntity -> {
+                StatesList statesList = new StatesList()
+                        .id(UUID.fromString(stateEntity.getUuid()))
+                        .stateName(stateEntity.getStateName());
+                statesLists.add(statesList);
+            });
+
+            StatesListResponse statesListResponse = new StatesListResponse().states(statesLists);
+            return new ResponseEntity<StatesListResponse>(statesListResponse, HttpStatus.OK);
+        }else
+
+            return new ResponseEntity<StatesListResponse>(new StatesListResponse(),HttpStatus.OK);
     }
 
 }

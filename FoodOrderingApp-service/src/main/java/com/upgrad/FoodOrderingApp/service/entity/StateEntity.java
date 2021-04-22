@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 @NamedQueries({
 
         @NamedQuery(name = "getStateByUuid", query = "SELECT s from StateEntity s where s.uuid = :uuid"),
+        @NamedQuery(name = "getAllStates",query = "SELECT s from StateEntity s"),
 })
 public class StateEntity {
 
@@ -54,4 +55,6 @@ public class StateEntity {
     public void setStateName(String stateName) {
         this.stateName = stateName;
     }
+
+
 }
