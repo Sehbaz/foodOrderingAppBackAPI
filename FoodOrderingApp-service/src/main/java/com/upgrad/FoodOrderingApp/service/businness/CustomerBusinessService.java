@@ -188,5 +188,27 @@ public class CustomerBusinessService {
         }
 
     }
+    /* This method is to getCustomer using accessToken and return the CustomerEntity .
+    If error throws exception with error code and error message.
+    */
+    public CustomerEntity getCustomer(String accessToken) throws AuthorizationFailedException {
+        CustomerAuthEntity customerAuthEntity = customerAuthDao.getCustomerAuthByAccessToken(accessToken);
+
+        if (customerAuthEntity == null) {//Checking if Customer not logged In
+            throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in.");
+        }
+
+        if (customerAuthEntity.getLogoutAt() != null) {//Checking if cutomer is logged Out
+            throw new AuthorizationFailedException("ATHR-002", "Customer is logged out. Log in again to access this endpoint.");
+        }
+
+        final ZonedDateTime now = ZonedDateTime.now();
+
+        if (customerAuthEntity.getExpiresAt().compareTo(now) <= 0) {//Checking accessToken is Expired.
+            throw new AuthorizationFailedException("ATHR-003", "Your session is expired. Log in again to access this endpoint.");
+        }
+        return customerAuthEntity.getCustomer();
+    }
+
 
 }

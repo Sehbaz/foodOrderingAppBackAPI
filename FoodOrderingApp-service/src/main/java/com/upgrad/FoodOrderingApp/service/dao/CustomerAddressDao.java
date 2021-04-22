@@ -1,4 +1,5 @@
 package com.upgrad.FoodOrderingApp.service.dao;
+import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import org.springframework.stereotype.Repository;
@@ -24,6 +25,14 @@ public class CustomerAddressDao {
         try{
             List <CustomerAddressEntity> customerAddressEntities = entityManager.createNamedQuery("getAllCustomerAddressByCustomer",CustomerAddressEntity.class).setParameter("customer_entity",customerEntity).getResultList();
             return customerAddressEntities;
+        }catch (NoResultException nre){
+            return null;
+        }
+    }
+    public CustomerAddressEntity getCustomerAddressByAddress(AddressEntity addressEntity){
+        try {
+            CustomerAddressEntity customerAddressEntity = entityManager.createNamedQuery("getCustomerAddressByAddress",CustomerAddressEntity.class).setParameter("address_entity",addressEntity).getSingleResult();
+            return customerAddressEntity;
         }catch (NoResultException nre){
             return null;
         }

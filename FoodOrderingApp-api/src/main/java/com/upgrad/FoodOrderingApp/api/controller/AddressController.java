@@ -2,7 +2,9 @@ package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.AddressBusinessService;
+import com.upgrad.FoodOrderingApp.service.businness.CustomerBusinessService;
 import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
@@ -25,6 +27,11 @@ public class AddressController {
 
     @Autowired
     AddressBusinessService addressBusinessService;
+
+    @Autowired
+    CustomerBusinessService customerBusinessService;
+
+
 
 
     @RequestMapping(method = RequestMethod.POST,path = "",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -70,6 +77,23 @@ public class AddressController {
         System.out.println(addressListResponse);
         return new ResponseEntity<AddressListResponse>(addressListResponse,HttpStatus.OK);
     }
+    @RequestMapping(method = RequestMethod.DELETE,path = "/{address_id}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<DeleteAddressResponse> deleteSavedAddress(@RequestHeader ("authorization") final String authorization,@PathVariable(value = "address_id")final String addressUuid)throws AuthorizationFailedException,AddressNotFoundException{
+        String accessToken = authorization.split("Bearer ")[1];
 
+        CustomerEntity customerEntity = customerBusinessService.getCustomer(accessToken);
+
+        AddressEntity addressEntity = addressBusinessService.getAddressByUUID(addressUuid,customerEntity);
+
+        AddressEntity deletedAddressEntity = addressBusinessService.deleteAddress(addressEntity);
+
+        DeleteAddressResponse deleteAddressResponse = new DeleteAddressResponse()
+                .id(UUID.fromString(deletedAddressEntity.getUuid()))
+                .status("ADDRESS DELETED SUCCESSFULLY");
+
+        return new ResponseEntity<DeleteAddressResponse>(deleteAddressResponse,HttpStatus.OK);
+
+
+    }
 
 }
