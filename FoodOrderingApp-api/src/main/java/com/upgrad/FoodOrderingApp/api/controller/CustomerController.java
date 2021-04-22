@@ -5,6 +5,7 @@ import com.upgrad.FoodOrderingApp.service.businness.CustomerBusinessService;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
+import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
 import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class CustomerController {
     //Login Functionality
 
     @RequestMapping(method = RequestMethod.POST,path = "/login",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<LoginResponse> customerLogin (@RequestHeader("authorization") final String authorization)throws AuthenticationFailedException {
+    public ResponseEntity<LoginResponse> customerLogin (@RequestHeader("authorization") final String authorization) throws AuthenticationFailedException, AuthorizationFailedException {
         byte[] decoded = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
         String decodedAuth = new String(decoded);
         String[] decodedArray = decodedAuth.split(":");
@@ -71,7 +72,7 @@ public class CustomerController {
 
     //Logged out controller
     @RequestMapping(method = RequestMethod.POST,path = "/logout",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<LogoutResponse> customerLogout (@RequestHeader("authorization")final String authorization)throws AuthenticationFailedException{
+    public ResponseEntity<LogoutResponse> customerLogout (@RequestHeader("authorization")final String authorization)throws AuthorizationFailedException {
         CustomerAuthEntity customerAuthEntity =  customerBusinessService.customerLogout(authorization);
 
         LogoutResponse logoutResponse = new LogoutResponse()
@@ -83,7 +84,7 @@ public class CustomerController {
 
 
     @RequestMapping(method = RequestMethod.PUT,path = "",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<UpdateCustomerResponse> updateCustomerDetails(@RequestHeader("authorization")final String authorization, UpdateCustomerRequest updateCustomerRequest)throws AuthenticationFailedException, UpdateCustomerException {
+    public ResponseEntity<UpdateCustomerResponse> updateCustomerDetails(@RequestHeader("authorization")final String authorization, UpdateCustomerRequest updateCustomerRequest)throws AuthorizationFailedException, UpdateCustomerException {
         String[] authorizationArray = authorization.split("Bearer ");
         CustomerEntity customerEntity = new CustomerEntity();
         customerEntity.setFirstName(updateCustomerRequest.getFirstName());
@@ -101,7 +102,7 @@ public class CustomerController {
     }
 
     @RequestMapping(method = RequestMethod.PUT,path = "/password",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<UpdatePasswordResponse> updateCustomerPassword(@RequestHeader ("authorization") final String authorization, UpdatePasswordRequest updatePasswordRequest)throws AuthenticationFailedException,UpdateCustomerException{
+    public ResponseEntity<UpdatePasswordResponse> updateCustomerPassword(@RequestHeader ("authorization") final String authorization, UpdatePasswordRequest updatePasswordRequest)throws AuthorizationFailedException,UpdateCustomerException{
         String oldPassword = updatePasswordRequest.getOldPassword();
         String newPassword = updatePasswordRequest.getNewPassword();
 

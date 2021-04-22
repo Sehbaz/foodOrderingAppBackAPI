@@ -28,7 +28,7 @@ public class AddressController {
 
 
     @RequestMapping(method = RequestMethod.POST,path = "",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<SaveAddressResponse> saveAddress(@RequestHeader("authorization") final String authorization, SaveAddressRequest saveAddressRequest)throws AuthenticationFailedException, AddressNotFoundException, SaveAddressException {
+    public ResponseEntity<SaveAddressResponse> saveAddress(@RequestHeader("authorization") final String authorization, SaveAddressRequest saveAddressRequest)throws AuthorizationFailedException, AddressNotFoundException, SaveAddressException {
         AddressEntity addressEntity = new AddressEntity();
 
         addressEntity.setFlatBuilNumber(saveAddressRequest.getFlatBuildingName());
