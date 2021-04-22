@@ -10,15 +10,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Service
-public class RestaurantServices {
+public class RestaurantService {
 
     @Autowired
     RestaurantDao restaurantDao;
 
     public List<RestaurantEntity> restaurantsByRating(){
-        return new LinkedList<RestaurantEntity>();
+        List<RestaurantEntity> restaurantEntities = restaurantDao.restaurantsByRating();
+        return restaurantEntities;
     }
-
 
 
 }

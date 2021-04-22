@@ -67,7 +67,7 @@ public class AddressBusinessService {
             throw new AddressNotFoundException("ANF-002","No state by this id");
         }
 
-        addressEntity.setStateName(stateEntity);
+        addressEntity.setState(stateEntity);
 
         AddressEntity savedAddress = addressDao.saveAddress(addressEntity);
 

@@ -36,4 +36,10 @@ public class AddressDao {
         entityManager.remove(addressEntity);
         return addressEntity;
     }
+
+    //To update Active Status.
+    public AddressEntity updateAddressActiveStatus(AddressEntity addressEntity) {
+        entityManager.merge(addressEntity);
+        return addressEntity;
+    }
 }
