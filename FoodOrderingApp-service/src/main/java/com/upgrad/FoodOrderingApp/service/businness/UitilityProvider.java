@@ -53,4 +53,10 @@ public class UitilityProvider {
         String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
         return email.matches(regex);
     }
+
+    public boolean isPincodeValid(String pincode){
+        Pattern p = Pattern.compile("\\d{6}\\b");
+        Matcher m = p.matcher(pincode);
+        return (m.find() && m.group().equals(pincode));
+    }
 }
