@@ -12,6 +12,9 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table (name = "address",uniqueConstraints = {@UniqueConstraint(columnNames = {"uuid"})})
+@NamedQueries({
+        @NamedQuery(name = "getAllCustomerAddressByCustomer",query = "SELECT c from CustomerAddressEntity c where c.customer = :customer_entity"),
+})
 public class AddressEntity {
 
 

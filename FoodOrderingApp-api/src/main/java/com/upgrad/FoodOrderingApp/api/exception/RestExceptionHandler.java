@@ -51,4 +51,11 @@ public class RestExceptionHandler {
                 .message(exc.getErrorMessage()),
                 HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(AuthorizationFailedException.class)
+    public ResponseEntity<ErrorResponse> authorizationFailedException(AuthorizationFailedException exc ,WebRequest request) {
+        return new ResponseEntity<ErrorResponse>(new ErrorResponse()
+                .code(exc.getCode())
+                .message(exc.getErrorMessage()),
+                HttpStatus.BAD_REQUEST);
+    }
 }
