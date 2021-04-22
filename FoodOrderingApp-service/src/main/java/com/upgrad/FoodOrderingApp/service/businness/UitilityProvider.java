@@ -1,6 +1,7 @@
 package com.upgrad.FoodOrderingApp.service.businness;
 
 
+import com.upgrad.FoodOrderingApp.service.exception.RestaurantNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Matcher;
@@ -58,5 +59,11 @@ public class UitilityProvider {
         Pattern p = Pattern.compile("\\d{6}\\b");
         Matcher m = p.matcher(pincode);
         return (m.find() && m.group().equals(pincode));
+    }
+    public  Boolean isValidRestaurantName(String restaurantName)throws RestaurantNotFoundException {
+        if(restaurantName == null || restaurantName ==""){
+            throw new RestaurantNotFoundException("RNF-003","Restaurant name field should not be empty");
+        }
+        return true;
     }
 }

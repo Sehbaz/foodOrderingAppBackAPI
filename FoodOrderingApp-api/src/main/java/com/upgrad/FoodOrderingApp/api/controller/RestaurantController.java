@@ -35,7 +35,8 @@ public class RestaurantController {
     @Autowired
     CategoryService categoryService;
 
-
+    @Autowired
+    UitilityProvider uitilityProvider;
 
 
     @RequestMapping(method = RequestMethod.GET,path = "",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -83,7 +84,7 @@ public class RestaurantController {
         RestaurantListResponse restaurantListResponse = new RestaurantListResponse().restaurants(restaurantLists);
         return new ResponseEntity<RestaurantListResponse>(restaurantListResponse,HttpStatus.OK);
     }
-/*
+
 
     @RequestMapping(method = RequestMethod.GET,path = "/name/{restaurant_name}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantListResponse> getRestaurantByName (@PathVariable(value = "restaurant_name") final String restaurantName)throws RestaurantNotFoundException {
@@ -109,7 +110,7 @@ public class RestaurantController {
                 RestaurantDetailsResponseAddress restaurantDetailsResponseAddress = new RestaurantDetailsResponseAddress()
                         .id(UUID.fromString(restaurantEntity.getAddress().getUuid()))
                         .city(restaurantEntity.getAddress().getCity())
-                        .flatBuildingName(restaurantEntity.getAddress().getFlatBuilNo())
+                        .flatBuildingName(restaurantEntity.getAddress().getFlatBuilNumber())
                         .locality(restaurantEntity.getAddress().getLocality())
                         .pincode(restaurantEntity.getAddress().getPincode())
                         .state(restaurantDetailsResponseAddressState);
@@ -134,7 +135,7 @@ public class RestaurantController {
         }
 
     }
-
+/*
     @RequestMapping(method = RequestMethod.GET,path = "/category/{category_id}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantListResponse> getRestaurantByCategoryId(@PathVariable(value = "category_id")String categoryId) throws CategoryNotFoundException {
 
