@@ -17,7 +17,8 @@ import java.math.BigDecimal;
 
         @NamedQuery(name = "restaurantsByRating",query = "SELECT r FROM RestaurantEntity r ORDER BY r.customerRating DESC"),
         @NamedQuery(name = "getRestaurantByUuid",query = "SELECT r FROM RestaurantEntity r WHERE r.uuid = :uuid"),
-        @NamedQuery(name = "restaurantsByName",query = "SELECT r FROM  RestaurantEntity r WHERE r.restaurantName LIKE :restaurant_name_caps OR r.restaurantName LIKE :restaurant_name_low"),})
+        @NamedQuery(name = "restaurantsByName",query = "SELECT r FROM  RestaurantEntity r WHERE r.restaurantName LIKE :restaurant_name_caps OR r.restaurantName LIKE :restaurant_name_low"),
+})
 public class RestaurantEntity implements Serializable {
 
 

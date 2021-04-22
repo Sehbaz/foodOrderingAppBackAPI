@@ -3,6 +3,7 @@ package com.upgrad.FoodOrderingApp.service.dao;
 
 import com.upgrad.FoodOrderingApp.service.entity.RestaurantEntity;
 import org.springframework.stereotype.Repository;
+import sun.tools.jconsole.JConsole;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -27,6 +28,7 @@ public class RestaurantDao {
 
 
     public RestaurantEntity getRestaurantByUuid(String uuid) {
+
         try {
             RestaurantEntity restaurantEntity = entityManager.createNamedQuery("getRestaurantByUuid",RestaurantEntity.class).setParameter("uuid",uuid).getSingleResult();
             return restaurantEntity;

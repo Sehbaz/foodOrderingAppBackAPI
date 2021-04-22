@@ -3,6 +3,7 @@ package com.upgrad.FoodOrderingApp.api.controller;
 import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
 
+import com.upgrad.FoodOrderingApp.service.businness.ItemService;
 import com.upgrad.FoodOrderingApp.service.businness.RestaurantService;
 import com.upgrad.FoodOrderingApp.service.businness.UitilityProvider;
 import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
@@ -38,6 +39,8 @@ public class RestaurantController {
     @Autowired
     UitilityProvider uitilityProvider;
 
+    @Autowired
+    ItemService itemService;
 
     @RequestMapping(method = RequestMethod.GET,path = "",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantListResponse>getAllRestaurants(){
@@ -180,7 +183,7 @@ public class RestaurantController {
         return new ResponseEntity<RestaurantListResponse>(restaurantListResponse, HttpStatus.OK);
 
     }
-/*
+
 
     @RequestMapping(method = RequestMethod.GET,path = "/{restaurant_id}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantDetailsResponse>getRestaurantByRestaurantId(@PathVariable(value = "restaurant_id") final String restaurantUuid)throws RestaurantNotFoundException{
@@ -198,7 +201,7 @@ public class RestaurantController {
                 }
                 ItemList itemList = new ItemList()
                         .id(UUID.fromString(itemEntity.getUuid()))
-                        .itemName(itemEntity.getitemName())
+                        .itemName(itemEntity.getItemName())
                         .price(itemEntity.getPrice())
                         .itemType(ItemList.ItemTypeEnum.valueOf(itemEntity.getType()));
 
@@ -218,7 +221,7 @@ public class RestaurantController {
         RestaurantDetailsResponseAddress restaurantDetailsResponseAddress = new RestaurantDetailsResponseAddress()
                 .id(UUID.fromString(restaurantEntity.getAddress().getUuid()))
                 .city(restaurantEntity.getAddress().getCity())
-                .flatBuildingName(restaurantEntity.getAddress().getFlatBuilNo())
+                .flatBuildingName(restaurantEntity.getAddress().getFlatBuilNumber())
                 .locality(restaurantEntity.getAddress().getLocality())
                 .pincode(restaurantEntity.getAddress().getPincode())
                 .state(restaurantDetailsResponseAddressState);
@@ -235,6 +238,6 @@ public class RestaurantController {
         return new ResponseEntity<RestaurantDetailsResponse>(restaurantDetailsResponse,HttpStatus.OK);
     }
 
- */
+
 
 }

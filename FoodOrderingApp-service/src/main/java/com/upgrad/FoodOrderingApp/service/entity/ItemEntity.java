@@ -2,6 +2,8 @@ package com.upgrad.FoodOrderingApp.service.entity;
 
 
 import com.upgrad.FoodOrderingApp.service.common.ItemType;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -15,16 +17,15 @@ import java.util.List;
 
 @Entity
 @Table(name = "item",uniqueConstraints = {@UniqueConstraint(columnNames = {"uuid"})})
-@NamedQueries({
-        @NamedQuery(name = "getItemByUUID",query = "SELECT i FROM ItemEntity i WHERE i.uuid = :uuid"),
-})
-public class ItemEntity implements Serializable {
+public class ItemEntity {
 
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+   
 
 
     @Column(name = "uuid")
@@ -50,10 +51,11 @@ public class ItemEntity implements Serializable {
     private Integer price;
 
 
+
     @Column(name = "type")
     @Size(max = 10)
     @NotNull
-    private ItemType type;
+    private String type;
 
     public Integer getId() {
         return id;
@@ -80,11 +82,11 @@ public class ItemEntity implements Serializable {
         this.price = price;
     }
 
-    public ItemType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(ItemType type) {
+    public void setType(String type) {
         this.type = type;
     }
 }
