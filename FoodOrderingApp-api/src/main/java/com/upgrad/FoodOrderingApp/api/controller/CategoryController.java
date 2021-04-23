@@ -26,18 +26,22 @@ public class CategoryController {
     CategoryService categoryService;
 
     @RequestMapping(method = RequestMethod.GET,path = "",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<CategoriesListResponse> getAllCategories(){
+    public ResponseEntity<CategoriesListResponse> getAllCategories() {
         List<CategoryEntity> categoryEntities = categoryService.getAllCategoriesOrderedByName();
-        List<CategoryListResponse> categoryListResponses =new LinkedList<>();
-        categoryEntities.forEach(categoryEntity -> {
-            CategoryListResponse categoryListResponse = new CategoryListResponse()
-                    .id(UUID.fromString(categoryEntity.getUuid()))
-                    .categoryName(categoryEntity.getCategoryName());
-            categoryListResponses.add(categoryListResponse);
-        });
+        if (!categoryEntities.isEmpty()) {
+            List<CategoryListResponse> categoryListResponses = new LinkedList<>();
+            categoryEntities.forEach(categoryEntity -> {
+                CategoryListResponse categoryListResponse = new CategoryListResponse()
+                        .id(UUID.fromString(categoryEntity.getUuid()))
+                        .categoryName(categoryEntity.getCategoryName());
+                categoryListResponses.add(categoryListResponse);
+            });
 
-        CategoriesListResponse categoriesListResponse = new CategoriesListResponse().categories(categoryListResponses);
-        return new ResponseEntity<CategoriesListResponse>(categoriesListResponse, HttpStatus.OK);
+            CategoriesListResponse categoriesListResponse = new CategoriesListResponse().categories(categoryListResponses);
+            return new ResponseEntity<CategoriesListResponse>(categoriesListResponse, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<CategoriesListResponse>(new CategoriesListResponse(), HttpStatus.OK);
+        }
     }
 
 
