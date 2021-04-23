@@ -25,7 +25,7 @@ public class ItemEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-   
+
 
 
     @Column(name = "uuid")
