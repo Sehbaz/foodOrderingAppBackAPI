@@ -1,9 +1,12 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Table(name = "category",uniqueConstraints = {@UniqueConstraint(columnNames = {"uuid"})})
@@ -16,7 +19,7 @@ public class CategoryEntity {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "uuid")
@@ -27,6 +30,19 @@ public class CategoryEntity {
     @Column(name = "category_name")
     @Size(max = 255)
     private String categoryName;
+
+
+    @Transient
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private List<ItemEntity> items;
+
+    public List<ItemEntity> getItems() {
+        return items;
+    }
+
+    public void setItems(List<ItemEntity> itemEntities) {
+        this.items = itemEntities;
+    }
 
     public Integer getId() {
         return id;

@@ -45,4 +45,14 @@ public class ItemService {
 
         return itemEntities;
     }
+
+    public List<ItemEntity> getItemsByCategory(CategoryEntity categoryEntity) {
+        List<CategoryItemEntity> categoryItemEntities = categoryItemDao.getItemsByCategory(categoryEntity);
+        List<ItemEntity> itemEntities = new LinkedList<>();
+        categoryItemEntities.forEach(categoryItemEntity -> {
+            ItemEntity itemEntity = categoryItemEntity.getItem();
+            itemEntities.add(itemEntity);
+        });
+        return itemEntities;
+    }
 }
