@@ -1,8 +1,9 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.upgrad.FoodOrderingApp.api.model.*;
-import com.upgrad.FoodOrderingApp.service.businness.AddressBusinessService;
-import com.upgrad.FoodOrderingApp.service.businness.CustomerBusinessService;
+
+import com.upgrad.FoodOrderingApp.service.businness.AddressService;
+import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
@@ -27,10 +28,10 @@ import java.util.UUID;
 public class AddressController {
 
     @Autowired
-    AddressBusinessService addressBusinessService;
+    AddressService addressService;
 
     @Autowired
-    CustomerBusinessService customerBusinessService;
+    CustomerService customerService;
 
 
 
@@ -47,7 +48,7 @@ public class AddressController {
 
         String stateUuid = saveAddressRequest.getStateUuid();
 
-        AddressEntity createdAddress = addressBusinessService.saveAddress(authorization,addressEntity,stateUuid);
+        AddressEntity createdAddress = addressService.saveAddress(authorization,addressEntity,stateUuid);
 
         SaveAddressResponse saveAddressResponse = new SaveAddressResponse()
                 .id(createdAddress.getUuid())
@@ -57,7 +58,7 @@ public class AddressController {
 
     @RequestMapping(method = RequestMethod.GET,path = "/address/customer",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AddressListResponse> getAllSavedAddress(@RequestHeader("authorization")final String authorization)throws AuthorizationFailedException {
-        List<AddressEntity> addressEntities = addressBusinessService.getAllSavedAddress(authorization);
+        List<AddressEntity> addressEntities = addressService.getAllSavedAddress(authorization);
         Collections.reverse(addressEntities);
         List<AddressList> addressLists = new LinkedList<>();
         addressEntities.forEach(addressEntity -> {
@@ -82,11 +83,11 @@ public class AddressController {
     public ResponseEntity<DeleteAddressResponse> deleteSavedAddress(@RequestHeader ("authorization") final String authorization,@PathVariable(value = "address_id")final String addressUuid)throws AuthorizationFailedException,AddressNotFoundException{
         String accessToken = authorization.split("Bearer ")[1];
 
-        CustomerEntity customerEntity = customerBusinessService.getCustomer(accessToken);
+        CustomerEntity customerEntity = customerService.getCustomer(accessToken);
 
-        AddressEntity addressEntity = addressBusinessService.getAddressByUUID(addressUuid,customerEntity);
+        AddressEntity addressEntity = addressService.getAddressByUUID(addressUuid,customerEntity);
 
-        AddressEntity deletedAddressEntity = addressBusinessService.deleteAddress(addressEntity);
+        AddressEntity deletedAddressEntity = addressService.deleteAddress(addressEntity);
 
         DeleteAddressResponse deleteAddressResponse = new DeleteAddressResponse()
                 .id(UUID.fromString(deletedAddressEntity.getUuid()))
@@ -98,7 +99,7 @@ public class AddressController {
     }
     @RequestMapping(method = RequestMethod.GET,path = "/states",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<StatesListResponse> getAllStates(){
-        List<StateEntity> stateEntities = addressBusinessService.getAllStates();
+        List<StateEntity> stateEntities = addressService.getAllStates();
         if(!stateEntities.isEmpty()) {
             List<StatesList> statesLists = new LinkedList<>();
             stateEntities.forEach(stateEntity -> {

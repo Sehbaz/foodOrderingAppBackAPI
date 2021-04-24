@@ -37,7 +37,7 @@ public class RestaurantController {
     UitilityProvider uitilityProvider;
 
     @Autowired
-    CustomerBusinessService customerService;
+    CustomerService customerService;
 
     @Autowired
     ItemService itemService;

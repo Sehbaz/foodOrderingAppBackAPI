@@ -1,7 +1,7 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.upgrad.FoodOrderingApp.api.model.*;
-import com.upgrad.FoodOrderingApp.service.businness.CustomerBusinessService;
+import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
@@ -24,7 +24,7 @@ import java.util.UUID;
 public class CustomerController {
 
     @Autowired
-    CustomerBusinessService customerBusinessService;
+    CustomerService customerService;
 
 
 // Sign up functionality
@@ -40,7 +40,7 @@ public class CustomerController {
         customerEntity.setUuid(UUID.randomUUID().toString());
 
 
-        CustomerEntity signedUpCustomer =  customerBusinessService.signUpCustomer(customerEntity);
+        CustomerEntity signedUpCustomer =  customerService.signUpCustomer(customerEntity);
         SignupCustomerResponse signupCustomerResponse = new SignupCustomerResponse().id(signedUpCustomer.getUuid()).status("CUSTOMER SUCCESSFULLY REGISTERED");
 
         return new ResponseEntity<SignupCustomerResponse>(signupCustomerResponse,HttpStatus.CREATED);
@@ -54,7 +54,7 @@ public class CustomerController {
         String decodedAuth = new String(decoded);
         String[] decodedArray = decodedAuth.split(":");
 
-        CustomerAuthEntity customerAuthEntity = customerBusinessService.authenticateCustomer(decodedArray[0],decodedArray[1]);
+        CustomerAuthEntity customerAuthEntity = customerService.authenticateCustomer(decodedArray[0],decodedArray[1]);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("access_token", customerAuthEntity.getAccessToken());
@@ -73,7 +73,7 @@ public class CustomerController {
     //Logged out controller
     @RequestMapping(method = RequestMethod.POST,path = "/logout",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<LogoutResponse> customerLogout (@RequestHeader("authorization")final String authorization)throws AuthorizationFailedException {
-        CustomerAuthEntity customerAuthEntity =  customerBusinessService.customerLogout(authorization);
+        CustomerAuthEntity customerAuthEntity =  customerService.customerLogout(authorization);
 
         LogoutResponse logoutResponse = new LogoutResponse()
                 .id(customerAuthEntity.getCustomer().getUuid())
@@ -90,7 +90,7 @@ public class CustomerController {
         customerEntity.setFirstName(updateCustomerRequest.getFirstName());
         customerEntity.setLastName(updateCustomerRequest.getLastName());
 
-        CustomerEntity updatedCustomerEntity = customerBusinessService.updateCustomerDetails(customerEntity,authorizationArray[1]);
+        CustomerEntity updatedCustomerEntity = customerService.updateCustomerDetails(customerEntity,authorizationArray[1]);
 
         UpdateCustomerResponse updateCustomerResponse = new UpdateCustomerResponse()
                 .firstName(updatedCustomerEntity.getFirstName())
@@ -106,7 +106,7 @@ public class CustomerController {
         String oldPassword = updatePasswordRequest.getOldPassword();
         String newPassword = updatePasswordRequest.getNewPassword();
 
-        CustomerEntity updatedCustomerEntity = customerBusinessService.updateCustomerPassword(authorization,oldPassword,newPassword);
+        CustomerEntity updatedCustomerEntity = customerService.updateCustomerPassword(authorization,oldPassword,newPassword);
 
         UpdatePasswordResponse updatePasswordResponse = new UpdatePasswordResponse()
                 .id(updatedCustomerEntity.getUuid())

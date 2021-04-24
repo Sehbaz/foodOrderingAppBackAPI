@@ -17,7 +17,7 @@ import java.util.UUID;
 import java.time.ZonedDateTime;
 
 @Service
-public class CustomerBusinessService {
+public class CustomerService {
 
     @Autowired
     CustomerDao customerDao;
