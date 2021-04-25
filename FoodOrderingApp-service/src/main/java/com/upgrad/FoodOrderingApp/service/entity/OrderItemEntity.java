@@ -13,10 +13,8 @@ import java.io.Serializable;
 @Entity
 @Table(name = "order_item")
 @NamedQueries({
-
-        @NamedQuery(name = "getOrderItemsByOrder",query = "SELECT o FROM OrderItemEntity o WHERE o.order = :orders ORDER BY LOWER(o.item.itemName) ASC"),
-        @NamedQuery(name = "getItemsByOrders",query = "SELECT o FROM OrderItemEntity o WHERE o.order = :ordersEntity"),
-
+        @NamedQuery(name = "getItemsByPopularity",query = "SELECT o FROM OrderItemEntity o GROUP BY o.item ORDER BY COUNT(o.item) DESC"),
+        @NamedQuery(name = "getOrderItemsByOrder",query = "SELECT o FROM OrderItemEntity o WHERE o.order = :orders ORDER BY o.item.itemName DESC"),
 })
 public class OrderItemEntity implements Serializable {
 

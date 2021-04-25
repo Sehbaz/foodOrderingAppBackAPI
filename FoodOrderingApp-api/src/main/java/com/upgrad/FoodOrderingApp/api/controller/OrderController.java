@@ -1,10 +1,7 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
 
-import com.upgrad.FoodOrderingApp.api.model.CouponDetailsResponse;
-import com.upgrad.FoodOrderingApp.api.model.ItemQuantity;
-import com.upgrad.FoodOrderingApp.api.model.SaveOrderRequest;
-import com.upgrad.FoodOrderingApp.api.model.SaveOrderResponse;
+import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.*;
 import com.upgrad.FoodOrderingApp.service.entity.*;
 import com.upgrad.FoodOrderingApp.service.exception.*;
@@ -14,8 +11,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.security.Timestamp;
 import java.time.ZonedDateTime;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -77,7 +77,7 @@ public class OrderController {
         //Calls restaurantService restaurantByUUID method to get the RestaurantEntity by it uuid.
         RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(saveOrderRequest.getRestaurantId().toString());
 
-        //Creating new order entity from the details fetched earlier and request details received.
+
 
         OrdersEntity ordersEntity = new OrdersEntity();
         ordersEntity.setUuid(UUID.randomUUID().toString());
@@ -115,6 +115,81 @@ public class OrderController {
                 .id(savedOrderEntity.getUuid())
                 .status("ORDER SUCCESSFULLY PLACED");
         return new ResponseEntity<SaveOrderResponse>(saveOrderResponse,HttpStatus.CREATED);
+    }
+
+    @RequestMapping(method = RequestMethod.GET,path = "",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<CustomerOrderResponse> getPastOrderOfUser(@RequestHeader(value = "authorization")final String authorization) throws AuthorizationFailedException {
+        String accessToken = authorization.split("Bearer ")[1];
+        CustomerEntity customerEntity = customerService.getCustomer(accessToken);
+
+        List<OrdersEntity> ordersEntities =  orderService.getOrdersByCustomers(customerEntity.getUuid());
+
+        List<OrderList> orderLists = new LinkedList<>();
+
+        if(ordersEntities != null){
+            for(OrdersEntity ordersEntity:ordersEntities){
+                List<OrderItemEntity> orderItemEntities = orderService.getOrderItemsByOrder(ordersEntity);
+                List<ItemQuantityResponse> itemQuantityResponseList = new LinkedList<>();
+                orderItemEntities.forEach(orderItemEntity -> {
+                    if(orderItemEntity.getItem().getType().equals("0")){
+                        orderItemEntity.getItem().setType("VEG");
+                    }else {
+                        orderItemEntity.getItem().setType("NON_VEG");
+                    }
+                    ItemQuantityResponseItem itemQuantityResponseItem = new ItemQuantityResponseItem()
+                            .itemName(orderItemEntity.getItem().getItemName())
+                            .itemPrice(orderItemEntity.getItem().getPrice())
+                            .id(UUID.fromString(orderItemEntity.getItem().getUuid()))
+                            .type(ItemQuantityResponseItem.TypeEnum.valueOf(orderItemEntity.getItem().getType()));
+                    ItemQuantityResponse itemQuantityResponse = new ItemQuantityResponse()
+                            .item(itemQuantityResponseItem)
+                            .quantity(orderItemEntity.getQuantity())
+                            .price(orderItemEntity.getPrice());
+                    itemQuantityResponseList.add(itemQuantityResponse);
+                });
+                OrderListAddressState orderListAddressState = new OrderListAddressState()
+                        .id(UUID.fromString(ordersEntity.getAddress().getState().getStateUuid()))
+                        .stateName(ordersEntity.getAddress().getState().getStateName());
+                OrderListAddress orderListAddress = new OrderListAddress()
+                        .id(UUID.fromString(ordersEntity.getAddress().getUuid()))
+                        .flatBuildingName(ordersEntity.getAddress().getFlatBuilNumber())
+                        .locality(ordersEntity.getAddress().getLocality())
+                        .city(ordersEntity.getAddress().getCity())
+                        .pincode(ordersEntity.getAddress().getPincode())
+                        .state(orderListAddressState);
+                OrderListCoupon orderListCoupon = new OrderListCoupon()
+                        .couponName(ordersEntity.getCoupon().getCouponName())
+                        .id(UUID.fromString(ordersEntity.getCoupon().getUuid()))
+                        .percent(ordersEntity.getCoupon().getPercent());
+                OrderListCustomer orderListCustomer = new OrderListCustomer()
+                        .id(UUID.fromString(ordersEntity.getCustomer().getUuid()))
+                        .firstName(ordersEntity.getCustomer().getFirstName())
+                        .lastName(ordersEntity.getCustomer().getLastName())
+                        .emailAddress(ordersEntity.getCustomer().getEmail())
+                        .contactNumber(ordersEntity.getCustomer().getContactNumber());
+                OrderListPayment orderListPayment = new OrderListPayment()
+                        .id(UUID.fromString(ordersEntity.getPayment().getUuid()))
+                        .paymentName(ordersEntity.getPayment().getPaymentName());
+                OrderList orderList = new OrderList()
+                        .id(UUID.fromString(ordersEntity.getUuid()))
+                        .itemQuantities(itemQuantityResponseList)
+                        .address(orderListAddress)
+                        .bill(BigDecimal.valueOf(ordersEntity.getBill()))
+                        .date(String.valueOf(ordersEntity.getDate()))
+                        .discount(BigDecimal.valueOf(ordersEntity.getDiscount()))
+                        .coupon(orderListCoupon)
+                        .customer(orderListCustomer)
+                        .payment(orderListPayment);
+                orderLists.add(orderList);
+            }
+            CustomerOrderResponse customerOrderResponse = new CustomerOrderResponse()
+                    .orders(orderLists);
+            return new ResponseEntity<CustomerOrderResponse>(customerOrderResponse,HttpStatus.OK);
+        }else {
+            return new ResponseEntity<CustomerOrderResponse>(new CustomerOrderResponse(),HttpStatus.OK);
+        }
+
+
     }
 
 
