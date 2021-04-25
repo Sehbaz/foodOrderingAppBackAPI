@@ -8,8 +8,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-//This Class is created to access DB with respect to OrderItem entity
-
 @Repository
 public class OrderItemDao {
 
@@ -40,6 +38,4 @@ public class OrderItemDao {
             return null;
         }
     }
-
-
 }
