@@ -5,7 +5,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.security.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
@@ -45,7 +45,7 @@ public class OrdersEntity implements Serializable {
 
     @Column(name = "date")
     @NotNull
-    private Timestamp  date;
+    private ZonedDateTime date;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "payment_id")
@@ -66,11 +66,11 @@ public class OrdersEntity implements Serializable {
     @NotNull
     private RestaurantEntity restaurant;
 
-    public OrdersEntity(){
+    public OrdersEntity() {
 
     }
 
-    public OrdersEntity(String uuid, Double bill, CouponEntity couponEntity, Double discount, Timestamp orderDate, PaymentEntity paymentEntity, CustomerEntity customerEntity, AddressEntity addressEntity, RestaurantEntity restaurantEntity) {
+    public OrdersEntity(String uuid, Double bill, CouponEntity couponEntity, Double discount, ZonedDateTime orderDate, PaymentEntity paymentEntity, CustomerEntity customerEntity, AddressEntity addressEntity, RestaurantEntity restaurantEntity) {
         this.uuid = uuid;
         this.bill = bill;
         this.coupon = couponEntity;
@@ -124,11 +124,11 @@ public class OrdersEntity implements Serializable {
         this.discount = discount;
     }
 
-    public Timestamp getDate() {
+    public ZonedDateTime getDate() {
         return date;
     }
 
-    public void setDate(Timestamp date) {
+    public void setDate(ZonedDateTime date) {
         this.date = date;
     }
 
