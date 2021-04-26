@@ -116,40 +116,49 @@ public class OrderController {
                 .status("ORDER SUCCESSFULLY PLACED");
         return new ResponseEntity<SaveOrderResponse>(saveOrderResponse,HttpStatus.CREATED);
     }
-
+    @CrossOrigin
     @RequestMapping(method = RequestMethod.GET,path = "",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<CustomerOrderResponse> getPastOrderOfUser(@RequestHeader(value = "authorization")final String authorization) throws AuthorizationFailedException {
+
+        //Access the accessToken from the request Header
         String accessToken = authorization.split("Bearer ")[1];
+
+        //Calls customerService getCustomerMethod to check the validity of the customer.this methods returns the customerEntity.
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
 
+        //Calls getOrdersByCustomers of orderService to get all the past orders of the customer.
         List<OrdersEntity> ordersEntities =  orderService.getOrdersByCustomers(customerEntity.getUuid());
 
+        //Creating List of OrderList
         List<OrderList> orderLists = new LinkedList<>();
 
-        if(ordersEntities != null){
-            for(OrdersEntity ordersEntity:ordersEntities){
+        if(ordersEntities != null){     //Checking if orderentities is null if yes them empty list is returned
+            for(OrdersEntity ordersEntity:ordersEntities){      //looping in for every orderentity in orderentities
+                //Calls getOrderItemsByOrder by order of orderService get all the items ordered in past by orders.
                 List<OrderItemEntity> orderItemEntities = orderService.getOrderItemsByOrder(ordersEntity);
+
+                //Creating ItemQuantitiesResponse List
                 List<ItemQuantityResponse> itemQuantityResponseList = new LinkedList<>();
-                orderItemEntities.forEach(orderItemEntity -> {
-                    if(orderItemEntity.getItem().getType().equals("0")){
-                        orderItemEntity.getItem().setType("VEG");
-                    }else {
-                        orderItemEntity.getItem().setType("NON_VEG");
-                    }
+                orderItemEntities.forEach(orderItemEntity -> {          //Looping for every item in the order to get details of the item ordered
+                    //Creating new ItemQuantityResponseItem
                     ItemQuantityResponseItem itemQuantityResponseItem = new ItemQuantityResponseItem()
                             .itemName(orderItemEntity.getItem().getItemName())
                             .itemPrice(orderItemEntity.getItem().getPrice())
                             .id(UUID.fromString(orderItemEntity.getItem().getUuid()))
-                            .type(ItemQuantityResponseItem.TypeEnum.valueOf(orderItemEntity.getItem().getType()));
+                            .type(ItemQuantityResponseItem.TypeEnum.valueOf(orderItemEntity.getItem().getType().getValue()));
+                    //Creating ItemQuantityResponse which will be added to the list
                     ItemQuantityResponse itemQuantityResponse = new ItemQuantityResponse()
                             .item(itemQuantityResponseItem)
                             .quantity(orderItemEntity.getQuantity())
                             .price(orderItemEntity.getPrice());
                     itemQuantityResponseList.add(itemQuantityResponse);
                 });
+                //Creating OrderListAddressState to add in the address
                 OrderListAddressState orderListAddressState = new OrderListAddressState()
                         .id(UUID.fromString(ordersEntity.getAddress().getState().getStateUuid()))
                         .stateName(ordersEntity.getAddress().getState().getStateName());
+
+                //Creating OrderListAddress to add address to the orderList
                 OrderListAddress orderListAddress = new OrderListAddress()
                         .id(UUID.fromString(ordersEntity.getAddress().getUuid()))
                         .flatBuildingName(ordersEntity.getAddress().getFlatBuilNumber())
@@ -157,19 +166,26 @@ public class OrderController {
                         .city(ordersEntity.getAddress().getCity())
                         .pincode(ordersEntity.getAddress().getPincode())
                         .state(orderListAddressState);
+                //Creating OrderListCoupon to add Coupon to the orderList
                 OrderListCoupon orderListCoupon = new OrderListCoupon()
                         .couponName(ordersEntity.getCoupon().getCouponName())
                         .id(UUID.fromString(ordersEntity.getCoupon().getUuid()))
                         .percent(ordersEntity.getCoupon().getPercent());
+
+                //Creating OrderListCustomer to add Customer to the orderList
                 OrderListCustomer orderListCustomer = new OrderListCustomer()
                         .id(UUID.fromString(ordersEntity.getCustomer().getUuid()))
                         .firstName(ordersEntity.getCustomer().getFirstName())
                         .lastName(ordersEntity.getCustomer().getLastName())
                         .emailAddress(ordersEntity.getCustomer().getEmail())
                         .contactNumber(ordersEntity.getCustomer().getContactNumber());
+
+                //Creating OrderListPayment to add Payment to the orderList
                 OrderListPayment orderListPayment = new OrderListPayment()
                         .id(UUID.fromString(ordersEntity.getPayment().getUuid()))
                         .paymentName(ordersEntity.getPayment().getPaymentName());
+
+                //Craeting orderList to add all the above info and then add it orderLists to finally add it to CustomerOrderResponse
                 OrderList orderList = new OrderList()
                         .id(UUID.fromString(ordersEntity.getUuid()))
                         .itemQuantities(itemQuantityResponseList)
@@ -182,15 +198,16 @@ public class OrderController {
                         .payment(orderListPayment);
                 orderLists.add(orderList);
             }
+
+            //Creating CustomerOrderResponse by adding OrderLists to it
             CustomerOrderResponse customerOrderResponse = new CustomerOrderResponse()
                     .orders(orderLists);
             return new ResponseEntity<CustomerOrderResponse>(customerOrderResponse,HttpStatus.OK);
         }else {
-            return new ResponseEntity<CustomerOrderResponse>(new CustomerOrderResponse(),HttpStatus.OK);
+            return new ResponseEntity<CustomerOrderResponse>(new CustomerOrderResponse(),HttpStatus.OK);//If no order created by customer empty array is returned.
         }
 
 
     }
-
 
 }

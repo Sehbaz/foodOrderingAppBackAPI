@@ -29,6 +29,10 @@ public class ItemEntity {
     private Integer id;
 
 
+    @Column(name = "type")
+    @Size(max = 10)
+    @NotNull
+    private ItemType type;
 
 
     @Column(name = "uuid")
@@ -55,10 +59,6 @@ public class ItemEntity {
 
 
 
-    @Column(name = "type")
-    @Size(max = 10)
-    @NotNull
-    private String type;
 
     public Integer getId() {
         return id;
@@ -85,11 +85,12 @@ public class ItemEntity {
         this.price = price;
     }
 
-    public String getType() {
+
+    public ItemType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ItemType type) {
         this.type = type;
     }
 }

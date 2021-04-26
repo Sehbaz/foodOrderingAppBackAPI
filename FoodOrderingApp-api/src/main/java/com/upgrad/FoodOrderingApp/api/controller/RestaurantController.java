@@ -185,39 +185,50 @@ public class RestaurantController {
     }
 
 
+    @CrossOrigin
     @RequestMapping(method = RequestMethod.GET,path = "/{restaurant_id}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantDetailsResponse>getRestaurantByRestaurantId(@PathVariable(value = "restaurant_id") final String restaurantUuid)throws RestaurantNotFoundException{
+
+        //Calls restaurantByUUID method of restaurantService to get the restaurant entity.
         RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(restaurantUuid);
+
+        //Calls  getCategoriesByRestaurant to get categories of the corresponding restaurant.
         List<CategoryEntity> categoryEntities = categoryService.getCategoriesByRestaurant(restaurantUuid);
+
+        //Creating category Lists  for the response
         List<CategoryList> categoryLists = new LinkedList<>();
-        for (CategoryEntity categoryEntity:categoryEntities){
+        for (CategoryEntity categoryEntity:categoryEntities){  //Looping for each CategoryEntity in categoryEntities
+
+            //Calls getItemsByCategoryAndRestaurant of itemService to get list of itemEntities.
             List<ItemEntity> itemEntities = itemService.getItemsByCategoryAndRestaurant(restaurantUuid ,categoryEntity.getUuid());
+            //Creating Item List for the CategoryList.
             List<ItemList> itemLists = new LinkedList<>();
             itemEntities.forEach(itemEntity -> {
-                if(itemEntity.getType().equals("0")){
-                    itemEntity.setType("VEG");
-                }else {
-                    itemEntity.setType("NON_VEG");
-                }
                 ItemList itemList = new ItemList()
                         .id(UUID.fromString(itemEntity.getUuid()))
                         .itemName(itemEntity.getItemName())
                         .price(itemEntity.getPrice())
-                        .itemType(ItemList.ItemTypeEnum.valueOf(itemEntity.getType()));
+                        .itemType(ItemList.ItemTypeEnum.valueOf(itemEntity.getType().getValue()));
 
                 itemLists.add(itemList);
             });
+
+            //Creating new category list to add listof category list
             CategoryList categoryList = new CategoryList()
                     .itemList(itemLists)
                     .id(UUID.fromString(categoryEntity.getUuid()))
                     .categoryName(categoryEntity.getCategoryName());
 
+            //adding to the categoryLists
             categoryLists.add(categoryList);
         }
 
+        //Creating the RestaurantDetailsResponseAddressState for the RestaurantDetailsResponseAddress
         RestaurantDetailsResponseAddressState restaurantDetailsResponseAddressState = new RestaurantDetailsResponseAddressState()
                 .id(UUID.fromString(restaurantEntity.getAddress().getState().getStateUuid()))
                 .stateName(restaurantEntity.getAddress().getState().getStateName());
+
+        //Creating the RestaurantDetailsResponseAddress for the RestaurantList
         RestaurantDetailsResponseAddress restaurantDetailsResponseAddress = new RestaurantDetailsResponseAddress()
                 .id(UUID.fromString(restaurantEntity.getAddress().getUuid()))
                 .city(restaurantEntity.getAddress().getCity())
@@ -225,6 +236,8 @@ public class RestaurantController {
                 .locality(restaurantEntity.getAddress().getLocality())
                 .pincode(restaurantEntity.getAddress().getPincode())
                 .state(restaurantDetailsResponseAddressState);
+
+        //Creating the RestaurantDetailsResponse by adding the list of categoryList and other details.
         RestaurantDetailsResponse restaurantDetailsResponse = new RestaurantDetailsResponse()
                 .restaurantName(restaurantEntity.getRestaurantName())
                 .address(restaurantDetailsResponseAddress)

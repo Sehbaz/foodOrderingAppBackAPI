@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -53,31 +50,34 @@ public class CategoryController {
         }
     }
 
+    @CrossOrigin
     @RequestMapping(method = RequestMethod.GET,path = "/{category_id}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<CategoryDetailsResponse> getCategoryById(@PathVariable(value = "category_id")final String categoryUuid) throws CategoryNotFoundException {
+
+        //Calls get Category By Id method of categoryService to get the CategoryEntity.
         CategoryEntity categoryEntity = categoryService.getCategoryById(categoryUuid);
-        List<ItemEntity> itemEntities = itemService.getItemsByCategory(categoryEntity);
+
+        //Creating list of itemEntities corresponding to the categoryEntities.
+        List<ItemEntity> itemEntities = categoryEntity.getItems();
+
+        //Creating List of ItemList
         List<ItemList> itemLists = new LinkedList<>();
-        itemEntities.forEach(itemEntity -> {
-            if(itemEntity.getType().equals("0")){
-                itemEntity.setType("VEG");
-            }else {
-                itemEntity.setType("NON_VEG");
-            }
+        itemEntities.forEach(itemEntity -> { //Looping in for each itemEntity in itemEntities
+            //Creating ItemList to add to listof Item List
             ItemList itemList = new ItemList()
                     .id(UUID.fromString(itemEntity.getUuid()))
                     .price(itemEntity.getPrice())
                     .itemName(itemEntity.getItemName())
-                    .itemType(ItemList.ItemTypeEnum.fromValue(itemEntity.getType()));
+                    .itemType(ItemList.ItemTypeEnum.fromValue(itemEntity.getType().getValue()));
             itemLists.add(itemList);
         });
 
+        //Creating CategoryDetailsResponse by adding the itemList and other details.
         CategoryDetailsResponse categoryDetailsResponse = new CategoryDetailsResponse()
                 .categoryName(categoryEntity.getCategoryName())
                 .id(UUID.fromString(categoryEntity.getUuid()))
                 .itemList(itemLists);
         return new ResponseEntity<CategoryDetailsResponse>(categoryDetailsResponse,HttpStatus.OK);
     }
-
 
 }
