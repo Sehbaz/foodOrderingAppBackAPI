@@ -4,6 +4,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 
 @Entity
@@ -12,7 +13,7 @@ import javax.persistence.*;
         @NamedQuery(name = "getAllCustomerAddressByCustomer",query = "SELECT c from CustomerAddressEntity c where c.customer = :customer_entity"),
         @NamedQuery(name = "getCustomerAddressByAddress",query = "SELECT c from CustomerAddressEntity c where c.address = :address_entity")
 })
-public class CustomerAddressEntity {
+public class CustomerAddressEntity implements Serializable {
 
     @Id
     @Column(name = "id")

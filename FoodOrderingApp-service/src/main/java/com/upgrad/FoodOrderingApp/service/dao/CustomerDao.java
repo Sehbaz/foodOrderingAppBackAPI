@@ -11,12 +11,10 @@ import javax.persistence.PersistenceContext;
 
 @Repository
 public class CustomerDao {
-
-
     @PersistenceContext
     private EntityManager entityManager;
 
-
+    //To get Customer By ContactNumber if no results return null
     public CustomerEntity getCustomerByContactNumber (final String contact_number){
         try{
             CustomerEntity customer = entityManager.createNamedQuery("customerByContactNumber",CustomerEntity.class).setParameter("contact_number",contact_number).getSingleResult();
@@ -27,10 +25,20 @@ public class CustomerDao {
     }
 
 
+    //To save the new customer entity
     public CustomerEntity createCustomer(CustomerEntity customerEntity){
         entityManager.persist(customerEntity);
         return customerEntity;
     }
+
+    //To update customer
+    public CustomerEntity updateCustomer(CustomerEntity customerToBeUpdated){
+        entityManager.merge(customerToBeUpdated);
+        return customerToBeUpdated;
+    }
+
+
+    //To get Customer By Uuid if no results return null
     public CustomerEntity getCustomerByUuid (final String uuid){
         try {
             CustomerEntity customer = entityManager.createNamedQuery("customerByUuid",CustomerEntity.class).setParameter("uuid",uuid).getSingleResult();
@@ -38,9 +46,5 @@ public class CustomerDao {
         }catch (NoResultException nre){
             return null;
         }
-    }
-    public CustomerEntity updateCustomer(CustomerEntity customerToBeUpdated){
-        entityManager.merge(customerToBeUpdated);
-        return customerToBeUpdated;
     }
 }

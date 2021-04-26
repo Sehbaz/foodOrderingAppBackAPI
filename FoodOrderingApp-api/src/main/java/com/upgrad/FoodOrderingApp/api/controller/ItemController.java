@@ -1,7 +1,6 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
 
-import aj.org.objectweb.asm.TypePath;
 import com.upgrad.FoodOrderingApp.api.model.ItemList;
 import com.upgrad.FoodOrderingApp.api.model.ItemListResponse;
 import com.upgrad.FoodOrderingApp.service.businness.ItemService;

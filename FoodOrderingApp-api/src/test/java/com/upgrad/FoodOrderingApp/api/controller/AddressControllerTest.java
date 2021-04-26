@@ -141,9 +141,10 @@ public class AddressControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("code").value("ANF-002"));
         verify(mockCustomerService, times(1)).getCustomer("database_accesstoken2");
-        verify(mockAddressService, times(1)).getStateByUUID(null);
+        verify(mockAddressService, times(1)).getStateByUUID("testUUID");
         verify(mockAddressService, times(0)).saveAddress(any(), any());
     }
+
 
     //This test case passes when you have handled the exception of trying to save an address with empty address field.
     @Test

@@ -33,31 +33,37 @@ public class CustomerService {
     PasswordCryptographyProvider passwordCryptographyProvider;
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerEntity saveCustomer(CustomerEntity customerEntity)throws SignUpRestrictedException {
+    public CustomerEntity saveCustomer(CustomerEntity customerEntity) throws SignUpRestrictedException {
+
+        //calls getCustomerByContactNumber method of customerDao to check if customer already exists.
         CustomerEntity existingCustomerEntity = customerDao.getCustomerByContactNumber(customerEntity.getContactNumber());
 
-        if (existingCustomerEntity != null) {
+        if (existingCustomerEntity != null) {//Checking if Customer already Exists if yes throws exception.
             throw new SignUpRestrictedException("SGR-001", "This contact number is already registered! Try other contact number");
         }
-        if (customerEntity.getContactNumber() == null || customerEntity.getEmail() == null || customerEntity.getFirstName() == null || customerEntity.getPassword() == null) {
+
+        if (!utilityProvider.isValidSignupRequest(customerEntity)) {//Checking if is Valid Signup Request.
             throw new SignUpRestrictedException("SGR-005", "Except last name all fields should be filled");
         }
 
-        if (!utilityProvider.isEmailValid(customerEntity.getEmail())) {
+        if (!utilityProvider.isEmailValid(customerEntity.getEmail())) {//Checking if email is valid
             throw new SignUpRestrictedException("SGR-002", "Invalid email-id format!");
         }
 
-        if (!utilityProvider.isContactValid(customerEntity.getContactNumber())) {
+        if (!utilityProvider.isContactValid(customerEntity.getContactNumber())) {//Checking if Contact is valid
             throw new SignUpRestrictedException("SGR-003", "Invalid contact number!");
         }
 
-        if (!utilityProvider.isValidPassword(customerEntity.getPassword())) {
+        if (!utilityProvider.isValidPassword(customerEntity.getPassword())) {//Checking if Password is valid.
             throw new SignUpRestrictedException("SGR-004", "Weak password!");
         }
 
+        //If all condition are satisfied the password is encoded using passwordCryptographyProvider and encoded password adn salt is added to the customerentity and persisited.
         String[] encryptedPassword = passwordCryptographyProvider.encrypt(customerEntity.getPassword());
         customerEntity.setSalt(encryptedPassword[0]);
         customerEntity.setPassword(encryptedPassword[1]);
+
+        //Calls createCustomer of customerDao to create the customer.
         CustomerEntity createdCustomerEntity = customerDao.createCustomer(customerEntity);
 
         return createdCustomerEntity;

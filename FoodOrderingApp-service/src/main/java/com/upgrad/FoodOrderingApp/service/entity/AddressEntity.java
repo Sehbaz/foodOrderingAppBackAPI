@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 @Entity
 @Table (name = "address",uniqueConstraints = {@UniqueConstraint(columnNames = {"uuid"})})
@@ -16,7 +17,7 @@ import javax.validation.constraints.Size;
 
         @NamedQuery(name = "getAddressByUuid",query = "SELECT a from AddressEntity a where a.uuid = :uuid"),
 })
-public class AddressEntity {
+public class AddressEntity implements Serializable {
 
 
     @Id

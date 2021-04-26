@@ -20,7 +20,7 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name = "getItemByUUID",query = "SELECT i FROM ItemEntity i WHERE i.uuid = :uuid"),
 })
-public class ItemEntity {
+public class ItemEntity implements Serializable {
 
 
     @Id
