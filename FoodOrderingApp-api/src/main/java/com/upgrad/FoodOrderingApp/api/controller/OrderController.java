@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.LinkedList;
@@ -55,8 +55,9 @@ public class OrderController {
         return new ResponseEntity<CouponDetailsResponse>(couponDetailsResponse,HttpStatus.OK);
     }
 
+    @CrossOrigin
     @RequestMapping(method = RequestMethod.POST,path = "",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<SaveOrderResponse> saveOrder(@RequestHeader(value = "authorization")final String authorization, final SaveOrderRequest saveOrderRequest) throws AuthorizationFailedException, PaymentMethodNotFoundException, AddressNotFoundException, RestaurantNotFoundException, CouponNotFoundException ,ItemNotFoundException{
+    public ResponseEntity<SaveOrderResponse> saveOrder(@RequestHeader(value = "authorization")final String authorization, @RequestBody(required = false) final SaveOrderRequest saveOrderRequest) throws AuthorizationFailedException, PaymentMethodNotFoundException, AddressNotFoundException, RestaurantNotFoundException, CouponNotFoundException ,ItemNotFoundException{
 
         //Access the accessToken from the request Header
         String accessToken = authorization.split("Bearer ")[1];
@@ -67,7 +68,6 @@ public class OrderController {
         //Calls orderService getCouponByCouponId method to get the CouponEntity by it uuid.
         CouponEntity couponEntity = orderService.getCouponByCouponId(saveOrderRequest.getCouponId().toString());
 
-
         //Calls paymentService getPaymentByUUID method to get the PaymentEntity by it uuid.
         PaymentEntity paymentEntity = paymentService.getPaymentByUUID(saveOrderRequest.getPaymentId().toString());
 
@@ -77,12 +77,12 @@ public class OrderController {
         //Calls restaurantService restaurantByUUID method to get the RestaurantEntity by it uuid.
         RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(saveOrderRequest.getRestaurantId().toString());
 
-
-
+        //Creating new order entity from the details fetched earlier and request details received.
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         OrdersEntity ordersEntity = new OrdersEntity();
         ordersEntity.setUuid(UUID.randomUUID().toString());
         ordersEntity.setBill(saveOrderRequest.getBill().floatValue());
-        ordersEntity.setDate(ZonedDateTime.now());
+        ordersEntity.setDate(timestamp);
         ordersEntity.setCustomer(customerEntity);
         ordersEntity.setDiscount(saveOrderRequest.getDiscount().doubleValue());
         ordersEntity.setPayment(paymentEntity);

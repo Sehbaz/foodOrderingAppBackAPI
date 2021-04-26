@@ -5,7 +5,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
@@ -43,7 +43,7 @@ public class OrdersEntity implements Serializable {
 
     @Column(name = "date")
     @NotNull
-    private ZonedDateTime date;
+    private Timestamp date;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "payment_id")
@@ -68,7 +68,7 @@ public class OrdersEntity implements Serializable {
 
     }
 
-    public OrdersEntity(String uuid, Double bill, CouponEntity couponEntity, Double discount, ZonedDateTime orderDate, PaymentEntity paymentEntity, CustomerEntity customerEntity, AddressEntity addressEntity, RestaurantEntity restaurantEntity) {
+    public OrdersEntity(String uuid, Double bill, CouponEntity couponEntity, Double discount, Timestamp orderDate, PaymentEntity paymentEntity, CustomerEntity customerEntity, AddressEntity addressEntity, RestaurantEntity restaurantEntity) {
         this.uuid = uuid;
         this.bill = bill;
         this.coupon = couponEntity;
@@ -122,13 +122,10 @@ public class OrdersEntity implements Serializable {
         this.discount = discount;
     }
 
-    public ZonedDateTime getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(ZonedDateTime date) {
-        this.date = date;
-    }
 
     public PaymentEntity getPayment() {
         return payment;
@@ -162,4 +159,7 @@ public class OrdersEntity implements Serializable {
         this.restaurant = restaurant;
     }
 
+    public void setDate(Timestamp timestamp) {
+        this.date=timestamp;
+    }
 }
