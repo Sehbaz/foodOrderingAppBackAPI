@@ -41,7 +41,7 @@ public class ItemController {
         //Calls getItemsByPopularity method of itemService to get the ItemEntity.
         List<ItemEntity> itemEntities = itemService.getItemsByPopularity(restaurantEntity);
 
-       
+
 
         //Creating the ItemListResponse details as required.
         ItemListResponse itemListResponse = new ItemListResponse();

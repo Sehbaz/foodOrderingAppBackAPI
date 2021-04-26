@@ -3,6 +3,7 @@ package com.upgrad.FoodOrderingApp.api.controller;
 import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.*;
 
+import com.upgrad.FoodOrderingApp.service.common.UtilityProvider;
 import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.entity.ItemEntity;
@@ -34,8 +35,7 @@ public class RestaurantController {
     CategoryService categoryService;
 
     @Autowired
-    UitilityProvider uitilityProvider;
-
+    UtilityProvider utilityProvider;
     @Autowired
     CustomerService customerService;
 

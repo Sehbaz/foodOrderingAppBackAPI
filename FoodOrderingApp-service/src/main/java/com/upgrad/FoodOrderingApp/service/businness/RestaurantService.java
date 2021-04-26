@@ -1,5 +1,6 @@
 package com.upgrad.FoodOrderingApp.service.businness;
 
+import com.upgrad.FoodOrderingApp.service.common.UtilityProvider;
 import com.upgrad.FoodOrderingApp.service.dao.CategoryDao;
 import com.upgrad.FoodOrderingApp.service.dao.RestaurantCategoryDao;
 import com.upgrad.FoodOrderingApp.service.dao.RestaurantDao;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.PublicKey;
 import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class RestaurantService {
     CategoryDao categoryDao;
 
     @Autowired
-    UitilityProvider uitilityProvider;
+    UtilityProvider utilityProvider;
 
     public List<RestaurantEntity> restaurantsByRating(){
         List<RestaurantEntity> restaurantEntities = restaurantDao.restaurantsByRating();
@@ -84,7 +84,7 @@ public class RestaurantService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public RestaurantEntity updateRestaurantRating(RestaurantEntity restaurantEntity, Double customerRating) throws InvalidRatingException {
-        if(!uitilityProvider.isValidCustomerRating(customerRating.toString())){
+        if(!utilityProvider.isValidCustomerRating(customerRating.toString())){
             throw new InvalidRatingException("IRE-001","Restaurant should be in the range of 1 to 5");
         }
         DecimalFormat format = new DecimalFormat("##.0");
