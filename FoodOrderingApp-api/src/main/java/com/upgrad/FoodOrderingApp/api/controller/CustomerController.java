@@ -21,7 +21,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
-@CrossOrigin
+
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {
@@ -35,6 +35,7 @@ public class CustomerController {
 
 // Sign up functionality
 
+    @CrossOrigin(origins = {"http://localhost:3000"}, maxAge = 6000)
     @RequestMapping(method = RequestMethod.POST,path = "/signup",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SignupCustomerResponse> saveCustomer( @RequestBody(required = false)  final SignupCustomerRequest signupCustomerRequest)throws SignUpRestrictedException {
         CustomerEntity customerEntity = new CustomerEntity();
@@ -55,7 +56,7 @@ public class CustomerController {
 
     //Login Functionality
 
-    @CrossOrigin
+    @CrossOrigin(origins = {"http://localhost:3000"}, maxAge = 6000)
     @RequestMapping(method = RequestMethod.POST,path = "/login",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<LoginResponse> customerLogin (@RequestHeader("authorization") final String authorization)throws AuthenticationFailedException {
 
