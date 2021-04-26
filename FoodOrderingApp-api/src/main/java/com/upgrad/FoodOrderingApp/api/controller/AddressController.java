@@ -36,7 +36,7 @@ public class AddressController {
 
 
 
-
+    @CrossOrigin
     @RequestMapping(method = RequestMethod.POST,path = "/address",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SaveAddressResponse> saveAddress(@RequestHeader("authorization") final String authorization, SaveAddressRequest saveAddressRequest)throws AuthorizationFailedException, AddressNotFoundException, SaveAddressException {
 
@@ -64,6 +64,7 @@ public class AddressController {
         return new ResponseEntity<SaveAddressResponse>(saveAddressResponse,HttpStatus.CREATED);
     }
 
+    @CrossOrigin
     @RequestMapping(method = RequestMethod.GET,path = "/address/customer",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AddressListResponse> getAllSavedAddress(@RequestHeader("authorization")final String authorization)throws AuthorizationFailedException {
         String accessToken = authorization.split("Bearer ")[1];
@@ -90,6 +91,8 @@ public class AddressController {
 
         return new ResponseEntity<AddressListResponse>(addressListResponse,HttpStatus.OK);
     }
+
+    @CrossOrigin
     @RequestMapping(method = RequestMethod.DELETE,path = "/address/{address_id}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<DeleteAddressResponse> deleteSavedAddress(@RequestHeader ("authorization") final String authorization,@PathVariable(value = "address_id")final String addressUuid)throws AuthorizationFailedException,AddressNotFoundException{
         String accessToken = authorization.split("Bearer ")[1];
@@ -108,6 +111,8 @@ public class AddressController {
 
 
     }
+
+    @CrossOrigin
     @RequestMapping(method = RequestMethod.GET,path = "/states",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<StatesListResponse> getAllStates(){
         List<StateEntity> stateEntities = addressService.getAllStates();
